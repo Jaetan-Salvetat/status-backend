@@ -17,7 +17,7 @@ async function register(req, res) {
     if(user instanceof User){
         console.log(typeof user);
         console.log(user);
-        return res.send(createToken(user.id, user.username, user.email, user.password))
+        return res.send(createToken(user.id, user.username, user.email))
     }
 
     res.send(user)
@@ -42,7 +42,7 @@ async function login(req, res) {
     if(user instanceof User){
         const goodPassword = await bcrypt.compare(req.body.password, user.password)
         if(!goodPassword) return res.send(authStatus.badUser)
-        return res.send(createToken(user.id, user.username, user.email, user.password))
+        return res.send(createToken(user.id, user.username, user.email))
     }
 
     res.send(authStatus.badUser)

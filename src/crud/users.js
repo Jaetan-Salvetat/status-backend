@@ -7,7 +7,7 @@ const salt = 10
 
 
 async function create(username, email, password){
-    if(!userMisc.emailVerification(email)){
+    if(!userMisc.validateEmail(email)){
         return userMisc.authStatus.badEmail
     }
     else if(username.length < 3){

@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken')
 const { User } = require('../sequelize')
 
-function emailVerification(email) {
+function validateEmail(email) {
     return email
         .toLowerCase()
         .match(/\S+@\S+\.\S+/)
@@ -15,8 +15,12 @@ async function usernameAlreadyUse(username) {
     return await User.findOne({ where: { username } }) !== null
 }
 
-function createToken(id, username, email, password){
-    return jwt.sign({id, username, email}, password)
+function createToken(id, username, email){
+    return jwt.sign({id, username, email}, username)
+}
+
+function validateToken(token){
+    return true
 }
 
 
@@ -33,9 +37,10 @@ const authStatus = {
 
 
 module.exports = {
-    emailVerification,
+    validateEmail,
     emailAlreadyUse,
     usernameAlreadyUse,
     createToken,
+    validateToken,
     authStatus,
 }
