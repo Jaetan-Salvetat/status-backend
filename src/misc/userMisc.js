@@ -27,7 +27,8 @@ const authStatus = {
     shortPassword: 'short-password',
     shortUsername: 'short-username',
     badEmail: 'bad-email',
-    badContent: 'bad-content'
+    badContent: 'bad-content',
+    badUser: 'bad-user'
 }
 
 

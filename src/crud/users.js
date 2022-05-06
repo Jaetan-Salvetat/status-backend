@@ -1,17 +1,13 @@
 const bcrypt = require('bcrypt')
 const { User } = require('../sequelize')
 const userMisc = require('../misc/userMisc');
+const { Op } = require('sequelize');
 
 const salt = 10
 
 
 async function create(username, email, password){
-    if(username === null || username === undefined
-    || email === null || email === undefined
-    || password === null || password === undefined){
-        return userMisc.authStatus.badContent
-    }
-    else if(!userMisc.emailVerification(email)){
+    if(!userMisc.emailVerification(email)){
         return userMisc.authStatus.badEmail
     }
     else if(username.length < 3){
@@ -27,11 +23,19 @@ async function create(username, email, password){
         return userMisc.authStatus.usernameAlreadyUse
     }
     const hash = await bcrypt.hash(password, salt)
-    const user = await User.create({username, email, password: hash})
-    return userMisc.createToken(user.id, username, email, user.password)
+    return await User.create({username, email, password: hash})
 }
 
 async function read(id, username, email){
+    return await User.findOne({
+        where: {
+            [Op.or]: {
+                id,
+                username,
+                email,
+            }
+        }
+    })
 }
 
 async function update(user){
