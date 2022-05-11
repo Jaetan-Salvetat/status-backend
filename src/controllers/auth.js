@@ -62,7 +62,21 @@ async function getUserInfos(req, res) {
 }
 
 async function update(req, res){
-    res.send('update')
+    if(!validateToken(req.body.token, req.body.username)){
+        return res.send(authStatus.badContent)
+    }
+    
+    let user = {}
+
+    user.email = req.body.email
+    user.username = req.body.username
+    user.newUsername = req.body.newUsername
+    user.tag = req.body.tag
+    user.password = req.body.password
+    user.profilePicture = req.body.profilePicture
+    user.description = req.body.description
+
+    res.send(crud.update(user))
 }
 
 async function remove(req, res){

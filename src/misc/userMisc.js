@@ -40,6 +40,7 @@ const authStatus = {
     badEmail: 'bad-email',
     badContent: 'bad-content',
     badUser: 'bad-user',
+    badPassword: 'bad-password',
     success: 'success'
 }
 
