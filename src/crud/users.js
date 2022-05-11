@@ -42,8 +42,10 @@ async function update(user){
 
 }
 
-async function remove(user){
-
+async function remove(username){
+    User.destroy({
+        where: {username}
+    })
 }
 
 module.exports = {

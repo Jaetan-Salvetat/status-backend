@@ -6,6 +6,9 @@ const authRouter = express.Router()
 //Auth
 authRouter.post('/register', authController.register)
 authRouter.post('/login', authController.login)
+authRouter.post('/user', authController.getUserInfos)
+authRouter.put('/update', authController.update)
+authRouter.delete('/remove', authController.remove)
 
 module.exports = {
     auth: authRouter

@@ -19,8 +19,15 @@ function createToken(id, username, email){
     return jwt.sign({id, username, email}, username)
 }
 
-function validateToken(token){
-    return true
+function validateToken(token, username){
+    try{
+        jwt.verify(token, username)
+        if(User.findOne({ where: { username } }) !== null) return true
+        return false
+        
+    }catch(e){
+        return false
+    }
 }
 
 
@@ -32,7 +39,8 @@ const authStatus = {
     shortUsername: 'short-username',
     badEmail: 'bad-email',
     badContent: 'bad-content',
-    badUser: 'bad-user'
+    badUser: 'bad-user',
+    success: 'success'
 }
 
 

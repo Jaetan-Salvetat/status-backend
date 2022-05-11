@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt')
 const crud = require('../crud/users')
-const { authStatus, createToken } = require('../misc/userMisc')
+const { authStatus, createToken, validateToken } = require('../misc/userMisc')
 const { User } = require('../sequelize')
 
 async function register(req, res) {
@@ -17,10 +17,13 @@ async function register(req, res) {
     if(user instanceof User){
         console.log(typeof user);
         console.log(user);
-        return res.send(createToken(user.id, user.username, user.email))
+        return res.send({
+            username: user.username,
+            token: createToken(user.id, user.username, user.email)
+        })
     }
 
-    res.send(user)
+    res.send(authStatus.badContent)
 }
 
 async function login(req, res) {
@@ -42,13 +45,39 @@ async function login(req, res) {
     if(user instanceof User){
         const goodPassword = await bcrypt.compare(req.body.password, user.password)
         if(!goodPassword) return res.send(authStatus.badUser)
-        return res.send(createToken(user.id, user.username, user.email))
+        return res.send({
+            username: user.username,
+            token: createToken(user.id, user.username, user.email)
+        })
     }
 
     res.send(authStatus.badUser)
 }
 
+async function getUserInfos(req, res) {
+    if(validateToken(req.body.token, req.body.username)){
+        return res.send(await crud.read(null, req.body.username, null))
+    }
+    res.send(authStatus.badContent)
+}
+
+async function update(req, res){
+    res.send('update')
+}
+
+async function remove(req, res){
+    if(!validateToken(req.body.token, req.body.username)){
+        return res.send(authStatus.badContent)
+    }
+
+    crud.remove(req.body.username)
+    res.send(authStatus.success)
+}
+
 module.exports = {
     register,
-    login
+    login,
+    getUserInfos,
+    update,
+    remove
 }
