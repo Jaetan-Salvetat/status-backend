@@ -1,8 +1,8 @@
 const bcrypt = require('bcrypt')
+const { Op } = require('sequelize')
 const { User } = require('../sequelize')
-const userMisc = require('../misc/userMisc');
-const { Op } = require('sequelize');
-const res = require('express/lib/response');
+const userMisc = require('../misc/user')
+const authStatus = require('../misc/requestStatus').auth
 
 const salt = 10
 const passwordLen = 8
@@ -11,19 +11,19 @@ const usernameLen = 3
 
 async function create(username, email, password){
     if(!userMisc.validateEmail(email)){
-        return userMisc.authStatus.badEmail
+        return authStatus.badEmail
     }
     else if(username.length < 3){
-        return userMisc.authStatus.shortUsername
+        return authStatus.shortUsername
     }
     else if(password.length < passwordLen){
-        return userMisc.authStatus.shortPassword
+        return authStatus.shortPassword
     }
     else if(await userMisc.emailAlreadyUse(email)){
-        return userMisc.authStatus.emailAlreadyUse
+        return authStatus.emailAlreadyUse
     }
     else if(await userMisc.usernameAlreadyUse(username)){
-        return userMisc.authStatus.usernameAlreadyUse
+        return authStatus.usernameAlreadyUse
     }
     const hash = await bcrypt.hash(password, salt)
     return await User.create({username, email, password: hash})
@@ -43,7 +43,7 @@ async function read(id, username, email){
 
 async function update(u){
     if(u.username === undefined || u.username === null){
-        return userMisc.authStatus.badContent
+        return authStatus.badContent
     }
 
     let user = await User.findOne({

@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken')
+const { key } = require('../../data')
 const { User } = require('../sequelize')
 
 function validateEmail(email) {
@@ -16,12 +17,12 @@ async function usernameAlreadyUse(username) {
 }
 
 function createToken(id, username, email){
-    return jwt.sign({id, username, email}, username)
+    return jwt.sign({id, username, email}, key + username)
 }
 
-function validateToken(token, username){
+function validateToken(token, username){ 
     try{
-        jwt.verify(token, username)
+        jwt.verify(token, key + username)
         if(User.findOne({ where: { username } }) !== null) return true
         return false
         
@@ -31,25 +32,10 @@ function validateToken(token, username){
 }
 
 
-
-const authStatus = {
-    emailAlreadyUse: 'email-already-use',
-    usernameAlreadyUse: 'username-already-use',
-    shortPassword: 'short-password',
-    shortUsername: 'short-username',
-    badEmail: 'bad-email',
-    badContent: 'bad-content',
-    badUser: 'bad-user',
-    badPassword: 'bad-password',
-    success: 'success'
-}
-
-
 module.exports = {
     validateEmail,
     emailAlreadyUse,
     usernameAlreadyUse,
     createToken,
     validateToken,
-    authStatus,
 }

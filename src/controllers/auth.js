@@ -1,7 +1,8 @@
 const bcrypt = require('bcrypt')
 const crud = require('../crud/users')
-const { authStatus, createToken, validateToken } = require('../misc/userMisc')
+const { createToken, validateToken } = require('../misc/user')
 const { User } = require('../sequelize')
+const authStatus = require('../misc/requestStatus').auth
 
 async function register(req, res) {
     if(req.body.email === undefined
