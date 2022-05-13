@@ -1,7 +1,8 @@
 const bcrypt = require('bcrypt')
 const { Op } = require('sequelize')
-const { User } = require('../sequelize')
 const userMisc = require('../misc/user')
+const { User } = require('../sequelize')
+const { objectIsEmpty } = require('../misc/global')
 const authStatus = require('../misc/requestStatus').auth
 
 const salt = 10
@@ -30,7 +31,7 @@ async function create(username, email, password){
 }
 
 async function read(id, username, email){
-    return await User.findOne({
+    const user = await User.findOne({
         where: {
             [Op.or]: {
                 id,
@@ -39,6 +40,11 @@ async function read(id, username, email){
             }
         }
     })
+
+    if(user === null){
+        return authStatus.badUser
+    }
+    return user
 }
 
 async function update(u){

@@ -1,10 +1,7 @@
 const { Sequelize, DataTypes } = require('sequelize')
-const express = require('express')
+const { mysql } = require('../data')
 
-const sequelize = new Sequelize({
-    dialect: 'sqlite',
-    storage: 'data/database.sqlite'
-  })
+const sequelize = new Sequelize('status', mysql.username, mysql.password, {dialect: 'mysql'})
 
 
 //Models
@@ -28,9 +25,6 @@ const User = sequelize.define('User', {
         type: DataTypes.STRING,
         allowNull: false
     },
-    tag: {
-        type: DataTypes.STRING,
-    },
     profilePicture: {
         type: DataTypes.STRING,
     },
@@ -50,6 +44,5 @@ const User = sequelize.define('User', {
 
 
 module.exports = {
-    sequelize,
     User,
 }
