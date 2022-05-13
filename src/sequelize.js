@@ -1,7 +1,7 @@
 const { Sequelize, DataTypes } = require('sequelize')
 const { mysql } = require('../data')
 
-const sequelize = new Sequelize('status', mysql.username, mysql.password, {dialect: 'mysql'})
+const sequelize = new Sequelize(mysql.database, mysql.username, mysql.password, {dialect: 'mysql'})
 
 
 //Models
