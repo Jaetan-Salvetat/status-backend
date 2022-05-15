@@ -30,13 +30,13 @@ async function create(username, email, password){
     return await User.create({username, email, password: hash})
 }
 
-async function read(id, username, email){
+async function read(id, auth){
     const user = await User.findOne({
         where: {
             [Op.or]: {
                 id,
-                username,
-                email,
+                username: auth,
+                email: auth,
             }
         }
     })

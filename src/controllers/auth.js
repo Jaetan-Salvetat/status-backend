@@ -16,32 +16,23 @@ async function register(req, res) {
 
 
     if(user instanceof User){
-        console.log(typeof user);
-        console.log(user);
         return res.send({
             username: user.username,
             token: createToken(user.id, user.username, user.email)
         })
     }
 
-    res.send(authStatus.badContent)
+    res.send(user)
 }
 
 async function login(req, res) {
-    let email = req.body.email
-    let username = req.body.username
+    let auth = req.body.auth
 
-    if((req.body.username === undefined || req.body.email === undefined) && req.body.password === undefined){
-        console.log(req.body.email);
+    if( req.body.auth === undefined && req.body.password === undefined){
         return res.send(authStatus.badContent)
     }
-    
-    if(email === undefined) email = null
-    if(username === undefined) username = null
 
-    console.log(username);
-
-    const user = await crud.read(null, username, email)
+    const user = await crud.read(null, auth)
 
     if(user instanceof User){
         const goodPassword = await bcrypt.compare(req.body.password, user.password)

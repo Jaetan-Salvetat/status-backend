@@ -8,7 +8,8 @@ module.exports = {
         badContent: 'bad-content',
         badUser: 'bad-user',
         badPassword: 'bad-password',
-        success: 'success'
+        success: 'success',
+        error: 'error',
     },
     upload: {
         badContent: 'bad-content',
