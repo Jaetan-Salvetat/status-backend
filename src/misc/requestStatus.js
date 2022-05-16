@@ -15,5 +15,11 @@ module.exports = {
         badContent: 'bad-content',
         error: 'error',
         success: 'success'
+    },
+    status: {
+        badUser: 'bad-user',
+        badContent: 'bad-content',
+        error: 'error',
+        success: 'success'
     }
 }

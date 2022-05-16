@@ -1,8 +1,21 @@
-function create(status){
+const { Status, User } = require('../sequelize')
+const { status } = require('../misc/requestStatus')
 
+
+async function create(userId, name, icon){
+    const user = await User.findOne({
+        where: {id: userId}
+    })
+
+    if(user == null){
+        return status.badUser
+    }
+
+    await Status.create({userId, name, icon})
+    return status.success
 }
 
-function read(statusId){
+function read(statusId, userId){
 
 }
 
