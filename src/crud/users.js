@@ -12,39 +12,32 @@ const usernameLen = 3
 async function create(username, email, password){
     if(!userMisc.validateEmail(email)){
         return {
-            user: null,
             msg: authStatus.badEmail
         }
     }
     else if(username.length < 3){
         return {
-            user: null,
             msg: authStatus.shortUsername
         }
     }
     else if(password.length < passwordLen){
         return {
-            user: null,
             msg: authStatus.shortPassword
         }
     }
     else if(await userMisc.emailAlreadyUse(email)){
         return {
-            user: null,
             msg: authStatus.emailAlreadyUse
         }
     }
     else if(await userMisc.usernameAlreadyUse(username)){
         return {
-            user: null,
             msg: authStatus.usernameAlreadyUse
         }
     }
+
     const hash = await bcrypt.hash(password, salt)
-    return {
-        user: await User.create({username, email, password: hash}),
-        msg: authStatus.success
-    }
+    return await User.create({username, email, password: hash})
 }
 
 async function read(id, auth){
@@ -64,7 +57,7 @@ async function read(id, auth){
         }
     }
 
-    return {user, msg: authStatus.success}
+    return user
 }
 
 async function update(u){
@@ -110,7 +103,7 @@ async function update(u){
         user.password = await bcrypt.hash(u.password, salt)
     }
 
-    return {user: await user.save(), msg: authStatus.success}
+    return await user.save()
 }
 
 async function remove(username){
@@ -119,10 +112,7 @@ async function remove(username){
     })
 
     if(userId === null || userId === undefined){
-        return {
-            user: null,
-            msg: authStatus.badUser
-        }
+        return authStatus.badUser
     }
 
     return {msg: authStatus.success}

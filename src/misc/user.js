@@ -5,7 +5,7 @@ const { User } = require('../sequelize')
 function validateEmail(email) {
     return email
         .toLowerCase()
-        .match(/\S+@\S+\.\S+/)
+        .match(/^[-!#$%&'*+\/0-9=?A-Z^_a-z{|}~](\.?[-!#$%&'*+\/0-9=?A-Z^_a-z`{|}~])*@[a-zA-Z0-9](-*\.?[a-zA-Z0-9])*\.[a-zA-Z](-?[a-zA-Z0-9])+$/)
 }
 
 async function emailAlreadyUse(email) {
@@ -23,8 +23,8 @@ function createToken(id, username, email){
 function validateToken(token, username){ 
     try{
         jwt.verify(token, key + username)
-        if(User.findOne({ where: { username } }) !== null) return true
-        return false
+        return User.findOne({where: {username}}) !== null;
+
         
     }catch(e){
         return false

@@ -37,7 +37,8 @@ async function login(req, res) {
 
     if(user instanceof User){
         const goodPassword = await bcrypt.compare(req.body.password, user.password)
-        if(!goodPassword) return res.send(authStatus.badUser)
+        if(!goodPassword) return res.send({msg: authStatus.badUser})
+
         return res.send({
             msg: authStatus.success,
             username: user.username,
@@ -45,19 +46,32 @@ async function login(req, res) {
         })
     }
 
-    res.send({msg: authStatus.badUser})
+    res.send(user)
 }
 
 async function getUserInfos(req, res) {
-    if(validateToken(req.body.token, req.body.username)){
-        return res.send(await crud.read(null, req.body.username, null))
+    if(req.body.username === undefined || req.body.token === undefined){
+        return res.send({msg: authStatus.badContent})
     }
-    res.send({msg: authStatus.badContent})
+
+    if(validateToken(req.body.token, req.body.username)){
+        let user = await crud.read(null, req.body.username, null)
+        user.password = null
+        return res.send({
+            user: user,
+            msg: authStatus.success
+        })
+    }
+    res.send({msg: authStatus.badToken})
 }
 
 async function update(req, res){
-    if(!validateToken(req.body.token, req.body.username)){
+    if(req.body.username === undefined || req.body.token === undefined){
         return res.send({msg: authStatus.badContent})
+    }
+
+    if(!validateToken(req.body.token, req.body.username)){
+        return res.send({msg: authStatus.badToken})
     }
     
     let user = {}
@@ -70,16 +84,37 @@ async function update(req, res){
     user.profilePicture = req.body.profilePicture
     user.description = req.body.description
 
-    res.send(crud.update(user))
+    user = await crud.update(user)
+
+    if(user instanceof User){
+        return res.send({
+            msg: authStatus.success,
+            username: user.username,
+            token: createToken(user.id, user.username, user.email)
+        })
+    }
+
+    res.send({
+        msg: authStatus.error
+    })
 }
 
 async function remove(req, res){
-    if(!validateToken(req.body.token, req.body.username)){
-        return res.send(authStatus.badContent)
+    if(req.body.username === undefined || req.body.token === undefined){
+        return res.send({msg: authStatus.badContent})
     }
 
-    crud.remove(req.body.username)
-    res.send(authStatus.success)
+    if(!validateToken(req.body.token, req.body.username)){
+        return res.send({msg: authStatus.badToken})
+    }
+
+    const hasRemoved = await crud.remove(req.body.username)
+
+    if(hasRemoved){
+        return res.send({msg: authStatus.success})
+    }
+
+    res.send({msg: authStatus.error})
 }
 
 module.exports = {

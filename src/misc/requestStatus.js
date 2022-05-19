@@ -6,6 +6,7 @@ module.exports = {
     badEmail: 'bad-email',
     badUser: 'bad-user',
     badPassword: 'bad-password',
+    badToken: 'bad-token',
     badContent: 'bad-content',
     error: 'error',
     success: 'success'
