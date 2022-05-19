@@ -2,13 +2,20 @@ const bcrypt = require('bcrypt')
 const { Op } = require('sequelize')
 const userMisc = require('../misc/user')
 const { User } = require('../sequelize')
+const createStatus = require('./status').create
 const authStatus = require('../misc/requestStatus')
 
 const salt = 10
 const passwordLen = 8
 const usernameLen = 3
 
-
+/**
+ *
+ * @param username {string}
+ * @param email {string}
+ * @param password {string}
+ * @returns {Promise<User|{msg: string}>}
+ */
 async function create(username, email, password){
     if(!userMisc.validateEmail(email)){
         return {
@@ -37,9 +44,19 @@ async function create(username, email, password){
     }
 
     const hash = await bcrypt.hash(password, salt)
-    return await User.create({username, email, password: hash})
+    const user = await User.create({username, email, password: hash})
+    await createStatus(user.id, "online", null)
+
+    return user
 }
 
+
+/**
+ *
+ * @param id {number|null}
+ * @param auth {string|null}
+ * @returns {Promise<User|{msg: string}>}
+ */
 async function read(id, auth){
     const user = await User.findOne({
         where: {
@@ -60,6 +77,12 @@ async function read(id, auth){
     return user
 }
 
+
+/**
+ *
+ * @param u {User|any}
+ * @returns {Promise<*|{msg: string}>}
+ */
 async function update(u){
     let user = await User.findOne({
         where: {username: u.username}
@@ -84,7 +107,9 @@ async function update(u){
 
     if(u.newUsername !== null && u.newUsername !== undefined && u.newUsername !== user.username){
         if(u.username.length < usernameLen){
-            return authStatus.shortUsername
+            return {
+                msg: authStatus.shortUsername
+            }
         }
         user.username = u.username
     }
@@ -103,19 +128,26 @@ async function update(u){
         user.password = await bcrypt.hash(u.password, salt)
     }
 
-    return await user.save()
+    await user.save()
+    return user
 }
 
+
+/**
+ *
+ * @param username
+ * @returns {Promise<string|{msg: string}>}
+ */
 async function remove(username){
     const userId = await User.destroy({
         where: {username}
     })
 
     if(userId === null || userId === undefined){
-        return authStatus.badUser
+        return {msg: authStatus.badUser}
     }
 
-    return {msg: authStatus.success}
+    return authStatus.success
 }
 
 module.exports = {

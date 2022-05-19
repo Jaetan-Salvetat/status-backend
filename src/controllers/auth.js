@@ -55,7 +55,7 @@ async function getUserInfos(req, res) {
     }
 
     if(validateToken(req.body.token, req.body.username)){
-        let user = await crud.read(null, req.body.username, null)
+        let user = await crud.read(null, req.body.username)
         user.password = null
         return res.send({
             user: user,

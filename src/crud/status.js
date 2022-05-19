@@ -1,6 +1,13 @@
 const { Status, User } = require('../sequelize')
-const { status } = require('../misc/requestStatus')
+const requestStatus = require('../misc/requestStatus')
 
+/**
+ *
+ * @param userId {number}
+ * @param name {string}
+ * @param icon {string|null}
+ * @return {Promise<string>}
+ */
 
 async function create(userId, name, icon){
     const user = await User.findOne({
@@ -8,23 +15,51 @@ async function create(userId, name, icon){
     })
 
     if(user == null){
-        return status.badUser
+        return requestStatus.badUser
     }
 
-    await Status.create({userId, name, icon})
-    return status.success
+    const status = await Status.create({userId, name, icon})
+
+    if(status instanceof Status){
+        return requestStatus.success
+    }
+    return requestStatus.error
 }
 
-function read(statusId, userId){
+/**
+ *
+ * @param userId {number}
+ * @returns {Promise<Array<Status>|{msg:string}>}
+ */
+async function read(userId){
+    const status = await Status.findAll({
+        where: {
+            userId
+        }
+    })
 
+    if(!status.length){
+        return {msg: requestStatus.badUser}
+    }
+    return status
 }
 
-function update(status){
-
+/**
+ *
+ * @param statusId {number}
+ * @return {string}
+ */
+function update(statusId){
+    return requestStatus.badStatus
 }
 
+/**
+ *
+ * @param statusId {number}
+ * @return {string}
+ */
 function remove(statusId){
-
+    return requestStatus.badStatus
 }
 
 module.exports = {

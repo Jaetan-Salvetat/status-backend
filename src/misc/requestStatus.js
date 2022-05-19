@@ -4,10 +4,13 @@ module.exports = {
     shortPassword: 'short-password',
     shortUsername: 'short-username',
     badEmail: 'bad-email',
-    badUser: 'bad-user',
     badPassword: 'bad-password',
     badToken: 'bad-token',
     badContent: 'bad-content',
+
+    badUser: 'bad-user',
+    badStatus: 'bad-status',
+
     error: 'error',
     success: 'success'
 }
