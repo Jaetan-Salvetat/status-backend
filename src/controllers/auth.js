@@ -2,13 +2,13 @@ const bcrypt = require('bcrypt')
 const crud = require('../crud/users')
 const { createToken, validateToken } = require('../misc/user')
 const { User } = require('../sequelize')
-const authStatus = require('../misc/requestStatus').auth
+const authStatus = require('../misc/requestStatus')
 
 async function register(req, res) {
     if(req.body.email === undefined
     || req.body.username === undefined
     || req.body.password === undefined){
-        return res.send(authStatus.badContent)
+        return res.send({msg: authStatus.badContent})
     }
 
 
@@ -17,6 +17,7 @@ async function register(req, res) {
 
     if(user instanceof User){
         return res.send({
+            msg: authStatus.success,
             username: user.username,
             token: createToken(user.id, user.username, user.email)
         })
@@ -29,7 +30,7 @@ async function login(req, res) {
     let auth = req.body.auth
 
     if( req.body.auth === undefined && req.body.password === undefined){
-        return res.send(authStatus.badContent)
+        return res.send({msg: authStatus.badContent})
     }
 
     const user = await crud.read(null, auth)
@@ -38,24 +39,25 @@ async function login(req, res) {
         const goodPassword = await bcrypt.compare(req.body.password, user.password)
         if(!goodPassword) return res.send(authStatus.badUser)
         return res.send({
+            msg: authStatus.success,
             username: user.username,
             token: createToken(user.id, user.username, user.email)
         })
     }
 
-    res.send(authStatus.badUser)
+    res.send({msg: authStatus.badUser})
 }
 
 async function getUserInfos(req, res) {
     if(validateToken(req.body.token, req.body.username)){
         return res.send(await crud.read(null, req.body.username, null))
     }
-    res.send(authStatus.badContent)
+    res.send({msg: authStatus.badContent})
 }
 
 async function update(req, res){
     if(!validateToken(req.body.token, req.body.username)){
-        return res.send(authStatus.badContent)
+        return res.send({msg: authStatus.badContent})
     }
     
     let user = {}
