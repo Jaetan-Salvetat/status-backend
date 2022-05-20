@@ -7,9 +7,10 @@ const authRouter = express.Router()
 const uploadRouter = express.Router()
 
 //Auth
-authRouter.post('/register', authController.register)
 authRouter.post('/login', authController.login)
+authRouter.post('/register', authController.register)
 authRouter.post('/user', authController.getUserInfos)
+authRouter.post('/validate-user-session', authController.validateUserSession)
 authRouter.put('/update', authController.update)
 authRouter.delete('/remove', authController.remove)
 

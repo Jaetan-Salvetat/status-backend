@@ -117,10 +117,25 @@ async function remove(req, res){
     res.send({msg: authStatus.error})
 }
 
+async function validateUserSession(req, res){
+    if(req.body.username === undefined || req.body.token === undefined){
+        return res.send({msg: authStatus.badContent})
+    }
+
+    if(!validateToken(req.body.token, req.body.username)){
+        return res.send({msg: authStatus.badToken})
+    }
+
+
+
+    res.send({msg: authStatus.success})
+}
+
 module.exports = {
     register,
     login,
     getUserInfos,
     update,
-    remove
+    remove,
+    validateUserSession
 }
