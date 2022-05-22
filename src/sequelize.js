@@ -14,12 +14,12 @@ const User = sequelize.define('User', {
     username: {
         type: DataTypes.STRING,
         allowNull: false,
-        unique: true
+        unique: 'usrname'
     },
     email: {
         type: DataTypes.STRING,
         allowNull: false,
-        unique: true
+        unique: 'mail'
     },
     password: {
         type: DataTypes.STRING,
@@ -54,8 +54,8 @@ const Status = sequelize.define('Status', {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    icon: {
-        type: DataTypes.STRING,
+    type: {
+      type: DataTypes.ENUM('online', 'away', 'offline')
     },
 },
 {
