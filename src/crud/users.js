@@ -45,7 +45,7 @@ async function create(username, email, password){
 
     const hash = await bcrypt.hash(password, salt)
     const user = await User.create({username, email, password: hash})
-    await createStatus(user.id, "online", null)
+    await createStatus(user.id, "online", 'online')
 
     return user
 }

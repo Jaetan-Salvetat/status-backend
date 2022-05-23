@@ -1,15 +1,22 @@
 const { Op } = require('sequelize')
 const { Follow } = require('../sequelize')
+const requestStatus = require('../misc/requestStatus')
 
 
 /**
  *
  * @param followed {number}
  * @param follower {number}
- * @return {Promise<void>}
+ * @return {Promise<string>}
  */
 async function create(followed, follower){
-    await Follow.create({followed, follower, notification: true})
+    const follow = await Follow.create({followed, follower, notification: true})
+
+    if(follow instanceof  Follow){
+        return requestStatus.success
+    }
+
+    return requestStatus.badUser
 }
 
 
@@ -34,10 +41,6 @@ async function read(followed, follower) {
     })
 }
 
-function update(link){
-
-}
-
 async function remove(follower, followed) {
     await Follow.destroy({
         where: {
@@ -52,6 +55,5 @@ async function remove(follower, followed) {
 module.exports = {
     create,
     read,
-    update,
     remove
 }

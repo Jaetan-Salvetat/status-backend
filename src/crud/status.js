@@ -5,11 +5,11 @@ const requestStatus = require('../misc/requestStatus')
  *
  * @param userId {number}
  * @param name {string}
- * @param icon {string|null}
+ * @param type {string}
  * @return {Promise<string>}
  */
 
-async function create(userId, name, icon){
+async function create(userId, name, type){
     const user = await User.findOne({
         where: {id: userId}
     })
@@ -18,7 +18,7 @@ async function create(userId, name, icon){
         return requestStatus.badUser
     }
 
-    const status = await Status.create({userId, name, icon})
+    const status = await Status.create({userId, name, type})
 
     if(status instanceof Status){
         return requestStatus.success
