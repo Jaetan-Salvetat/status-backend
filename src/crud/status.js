@@ -45,12 +45,31 @@ async function read(userId){
 }
 
 /**
- *
- * @param statusId {number}
- * @return {string}
+ * @param userId {number}
+ * @param s {Status|any}
+ * @return {Promise<string>}
  */
-function update(statusId){
-    return requestStatus.badStatus
+async function update(userId, s){
+    const status = await Status.findOne({
+        where: {userId}
+    })
+
+    if(status === null){
+        return requestStatus.badStatus
+    }
+
+    if(s.name !== undefined && s.name !== null){
+        status.name = s.name
+    }
+
+    if(s.type !== undefined && s.type != null){
+        if(s.type === 'online' || s.type === 'away' || s.type === 'offline'){
+            status.type = s.type
+        }
+    }
+
+    status.save()
+    return requestStatus.success
 }
 
 /**

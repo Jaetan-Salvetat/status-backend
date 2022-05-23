@@ -81,7 +81,7 @@ async function read(id, auth){
 /**
  *
  * @param u {User|any}
- * @returns {Promise<*|{msg: string}>}
+ * @returns {Promise<User|{msg: string}>}
  */
 async function update(u){
     let user = await User.findOne({
@@ -94,9 +94,6 @@ async function update(u){
 
     if(u.email !== null && u.email !== undefined && u.email !== user.email){
         user.email = u.email
-    }
-    if(u.tag !== null && u.tag !== undefined && u.tag !== user.tag){
-        user.tag = u.tag
     }
     if(u.profilePicture !== null && u.profilePicture !== undefined && u.profilePicture !== user.profilePicture){
         user.profilePicture = u.profilePicture
