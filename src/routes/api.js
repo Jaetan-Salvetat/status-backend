@@ -1,8 +1,8 @@
 const express = require('express')
 const multer = require('multer')({dest: './temp'})
-const authController = require('./controllers/auth')
-const filesController = require('./controllers/upload')
-const followController = require('./controllers/follow')
+const authController = require('../controllers/auth')
+const filesController = require('../controllers/upload')
+const followController = require('../controllers/follow')
 
 const authRouter = express.Router()
 const uploadRouter = express.Router()
