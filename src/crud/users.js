@@ -77,6 +77,23 @@ async function read(id, auth){
     return user
 }
 
+/**
+ *
+ * @param username {string}
+ * @return {Promise<Array<User>>}
+ */
+async function findMany(username){
+    return User.findAll({
+        limit: 50,
+        attributes: ['username', 'profilePicture'],
+        where: {
+            username: {
+                [Op.like]: `%${username}%`
+            }
+        }
+    })
+}
+
 
 /**
  *
@@ -150,6 +167,7 @@ async function remove(username){
 module.exports = {
     create,
     read,
+    findMany,
     update,
     remove
 }

@@ -21,6 +21,7 @@ io.on('connection', async (socket) => {
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
 app.use('/auth', apiRoutes.auth)
+app.use('/users', apiRoutes.users)
 app.use('/upload', apiRoutes.upload)
 app.use('/follow', apiRoutes.follow)
 
