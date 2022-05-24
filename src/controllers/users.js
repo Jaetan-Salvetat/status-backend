@@ -6,7 +6,10 @@ async function searchUsers(req, res){
         return res.send(requestStatus.badContent)
     }
 
-    res.send(await crud.findMany(req.params.username))
+    res.send({
+        users: await crud.findMany(req.params.username),
+        msg: requestStatus.success
+    })
 }
 
 module.exports = {
