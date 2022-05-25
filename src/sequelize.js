@@ -108,10 +108,10 @@ const Tag = sequelize.define('Tag', {
     Follow.belongsTo(User, { foreignKey: 'follower' })
     Follow.belongsTo(User, { foreignKey: 'followed' })
     Status.belongsTo(User, { foreignKey: 'userId' })
-    Link.belongsTo(User, { foreignKey: 'userId' })
-    Tag.belongsTo(User, { foreignKey: 'userId' })
 
-    User.belongsTo(Status, {foreignKey: 'statusId'})
+    User.hasMany(Follow, {foreignKey: 'follower'})
+    User.hasMany(Follow, {foreignKey: 'followed'})
+    User.hasOne(Status, {foreignKey: 'userId'})
 
     await User.sync({alter: true})
     await Status.sync({alter: true})
