@@ -20,6 +20,7 @@ authRouter.delete('/remove', authController.remove)
 
 
 usersRouter.get('/search/:username', usersController.searchUsers)
+usersRouter.post('/followers', usersController.findUserFollows)
 
 //Upload
 uploadRouter.post('/profile-picture', multer.single('picture'), filesController.profilePicture)

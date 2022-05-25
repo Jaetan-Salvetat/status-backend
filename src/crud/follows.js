@@ -1,5 +1,5 @@
 const { Op } = require('sequelize')
-const { Follow } = require('../sequelize')
+const { Follow, User, Status} = require('../sequelize')
 const requestStatus = require('../misc/requestStatus')
 
 
@@ -27,19 +27,34 @@ async function create(followed, follower){
  * @return {Promise<Array<Follow>>}
  */
 async function read(followed, follower) {
-    if (followed != null) {
+    if (followed === null || follower === null) {
         return await Follow.findAll({
+            include: [
+                {
+                    model: User,
+                    attributes: ['username', 'profilePicture'],
+                    include: [{model: Status}]
+                }
+            ],
             where: {
-                followed
+                [Op.or]: {
+                    follower,
+                    followed
+                }
             }
         })
     }
+
     return await Follow.findAll({
         where: {
-            follower
+            [Op.and]: {
+                follower,
+                followed
+            }
         }
     })
 }
+
 
 async function remove(follower, followed) {
     await Follow.destroy({

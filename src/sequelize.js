@@ -14,7 +14,7 @@ const User = sequelize.define('User', {
     username: {
         type: DataTypes.STRING,
         allowNull: false,
-        unique: 'usrname'
+        unique: 'username'
     },
     email: {
         type: DataTypes.STRING,
@@ -42,14 +42,6 @@ const Status = sequelize.define('Status', {
         autoIncrement: true,
         primaryKey: true
     },
-    userId: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-            model: 'users',
-            key: 'id'
-        }
-    },
     name: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -67,14 +59,6 @@ const Link = sequelize.define('Link', {
         type: DataTypes.INTEGER,
         autoIncrement: true,
         primaryKey: true
-    },
-    userId: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-            model: 'users',
-            key: 'id'
-        }
     },
     text: {
         type: DataTypes.STRING,
@@ -94,22 +78,6 @@ const Follow = sequelize.define('Follow', {
         autoIncrement: true,
         primaryKey: true
     },
-    followed: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-            model: 'users',
-            key: 'id'
-        }
-    },
-    follower: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-            model: 'users',
-            key: 'id'
-        }
-    },
     notification: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
@@ -125,14 +93,6 @@ const Tag = sequelize.define('Tag', {
         autoIncrement: true,
         primaryKey: true
     },
-    userId: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-            model: 'users',
-            key: 'id'
-        }
-    },
     name: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -145,6 +105,14 @@ const Tag = sequelize.define('Tag', {
 
 //Init
 (async () => {
+    Follow.belongsTo(User, { foreignKey: 'follower' })
+    Follow.belongsTo(User, { foreignKey: 'followed' })
+    Status.belongsTo(User, { foreignKey: 'userId' })
+    Link.belongsTo(User, { foreignKey: 'userId' })
+    Tag.belongsTo(User, { foreignKey: 'userId' })
+
+    User.belongsTo(Status, {foreignKey: 'statusId'})
+
     await User.sync({alter: true})
     await Status.sync({alter: true})
     await Link.sync({alter: true})
