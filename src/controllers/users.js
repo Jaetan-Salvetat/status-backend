@@ -1,8 +1,7 @@
 const crud = require('../crud/users')
 const requestStatus = require('../misc/requestStatus')
 const { validateToken } = require('../misc/user')
-const {User} = require("../sequelize")
-const { read: findFollows } = require('../crud/follows')
+const {User, Status, Follow} = require("../sequelize")
 
 async function searchUsers(req, res){
     if(req.params.username === undefined || req.params.username === null){
@@ -24,16 +23,39 @@ async function findUserFollows(req, res) {
         return res.send({msg: requestStatus.badToken})
     }
 
-    const user = await crud.read(null, req.body.username)
+    const user = await User.findOne({
+        where: {
+            username: req.body.username,
+        },
+        attributes: ['id']
+    })
+
 
     if(!(user instanceof User)){
         return res.send({msg: requestStatus.badUser})
     }
 
-    const follows = await findFollows(null, user.id)
+
+    const follows = await Follow.findAll({
+        where: {
+            follower: user.id
+        },
+        attributes: ['followed']
+    })
+
+    const users = await User.findAll({
+        where: {
+            id: follows.map(f => f.followed)
+        },
+        attributes: [ 'username', 'profilePicture' ],
+        include: [
+            {model: Status}
+        ]
+    })
+
 
     res.send({
-        users: follows,
+        users,
         msg: requestStatus.success
     })
 }

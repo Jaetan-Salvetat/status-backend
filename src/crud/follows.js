@@ -10,6 +10,9 @@ const requestStatus = require('../misc/requestStatus')
  * @return {Promise<string>}
  */
 async function create(followed, follower){
+    if((await read(followed, follower)).length > 0){
+        return requestStatus.userAlreadyFollowed
+    }
     const follow = await Follow.create({followed, follower, notification: true})
 
     if(follow instanceof  Follow){
