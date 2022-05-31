@@ -49,22 +49,6 @@ async function login(req, res) {
     res.send(user)
 }
 
-async function getUserInfos(req, res) {
-    if(req.body.username === undefined || req.body.token === undefined){
-        return res.send({msg: authStatus.badContent})
-    }
-
-    if(validateToken(req.body.token, req.body.username)){
-        let user = await crud.read(null, req.body.username)
-        user.password = null
-        return res.send({
-            user: user,
-            msg: authStatus.success
-        })
-    }
-    res.send({msg: authStatus.badToken})
-}
-
 async function update(req, res){
     if(req.body.username === undefined || req.body.token === undefined){
         return res.send({msg: authStatus.badContent})
@@ -134,7 +118,6 @@ async function validateUserSession(req, res){
 module.exports = {
     register,
     login,
-    getUserInfos,
     update,
     remove,
     validateUserSession

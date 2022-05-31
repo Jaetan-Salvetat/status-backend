@@ -25,4 +25,4 @@ app.use('/users', apiRoutes.users)
 app.use('/upload', apiRoutes.upload)
 app.use('/follow', apiRoutes.follow)
 
-server.listen(3000)
+server.listen(process.env.PORT || 3000)

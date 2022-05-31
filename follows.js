@@ -19,14 +19,15 @@ async function create(followed, follower){
         }
     })
     if(!(hasFollowed instanceof Follow)){
-        const follow = await Follow.create({followed, follower, notification: true})
+        return requestStatus.userAlreadyFollowed
+    }
+    const follow = await Follow.create({followed, follower, notification: true})
 
-        if(follow instanceof  Follow){
-            return requestStatus.success
-        }
+    if(follow instanceof  Follow){
+        return requestStatus.success
     }
 
-    return requestStatus.userAlreadyFollowed
+    return requestStatus.error
 }
 
 

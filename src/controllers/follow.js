@@ -1,7 +1,8 @@
 const requestStatus = require('../misc/requestStatus')
 const { validateToken } = require('../misc/user')
 const crud = require('../crud/follows')
-const {User} = require("../sequelize")
+const {User, Follow} = require("../sequelize")
+const {Op} = require("sequelize");
 const findUser = require('../crud/users').read
 
 async function follow(req, res){
@@ -15,20 +16,40 @@ async function follow(req, res){
 
     const followed = await findUser(null, req.body.followedUsername)
     const follower = await findUser(null, req.body.username)
+    let follow = requestStatus.error
 
     if(followed instanceof User && follower instanceof User){
-        const hasCreated = await crud.create(followed.id, follower.id)
-
-        if(hasCreated === requestStatus.success){
-            return res.send({ msg: requestStatus.success })
-        }
+        follow = await crud.create(followed.id, follower.id)
     }
 
-    res.send({ msg: requestStatus.badUser })
+    res.send({ msg: follow })
 }
 
 async function unfollow(req, res){
+    if(req.body.username === undefined || req.body.token === undefined
+        || req.body.followed === undefined){
+        return res.send({ msg: requestStatus.badContent })
+    }
 
+    if(!validateToken(req.body.token, req.body.username)){
+        return res.send({ msg: requestStatus.badToken })
+    }
+
+    const me = await User.findOne({
+        attributes: ['id'],
+        where:{ username: req.body.username }
+    })
+
+    await Follow.destroy({
+        where: {
+            [Op.and]: {
+                follower: me.id,
+                followed: req.body.followed
+            }
+        }
+    })
+
+    res.send({ msg: requestStatus.success })
 }
 
 module.exports = {

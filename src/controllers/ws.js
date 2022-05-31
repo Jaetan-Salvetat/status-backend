@@ -16,7 +16,7 @@ async function connection(socket){
     const username = socket.handshake.query.username
     const token = socket.handshake.query.token
 
-    //user is connected
+    //user isn't connected
     if(!validateToken(token, username)){
         socket.disconnect(true)
         console.log("bad token")
